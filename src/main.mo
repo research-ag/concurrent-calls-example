@@ -23,7 +23,7 @@ actor HelloWorld {
   ] |> Array.map<Text, Principal>(_, func p = Principal.fromText(p));
 
   public func makeCalls(n : Nat) : async [R.Result<Nat64, Text>] {
-    let res = Array.init<R.Result<Nat64, Text>>(n, #err("N/A"));
+    let res = Array.init<R.Result<Nat64, Text>>(n, #err("Failed to schedule the call"));
     let calls = Buffer.Buffer<Concurrent.Item>(n);
 
     for (i in Iter.range(0, n - 1)) {
@@ -33,7 +33,6 @@ actor HelloWorld {
           num_requested_changes = ?(20 : Nat64);
         };
         register_call = func() = res[i] := #err("Call registered");
-        register_fail_cb = func() = res[i] := #err("Failed to schedule the call");
         process_response = func(info) = res[i] := #ok(info.total_num_changes);
         process_error = func(e) = res[i] := #err(Error.message(e));
       });
